@@ -6,7 +6,7 @@ from mongoengine import connect
 from pympler import asizeof
 
 from pycoshark.mongomodels import Project, VCSSystem, File, Commit, FileAction, Issue, IssueSystem, Refactoring, Hunk
-from pycoshark.utils import create_mongodb_uri_string, git_tag_filter, get_affected_versions, java_filename_filter, jira_is_resolved_and_fixed
+from pycoshark.utils import create_mongodb_uri_string, git_tag_filter, get_affected_versions, filename_filter, is_resolved_and_fixed
 
 from util.git import CollectGit
 
@@ -35,6 +35,7 @@ class InducingMiner:
             raise Exception('only jira issue systems are supported!')
 
         self._vcs_id = vcs.id
+        self.its = its
         self._its_id = its.id
         self._jira_key = its.url.split('project=')[-1]
 
@@ -272,7 +273,7 @@ class InducingMiner:
                 f = File.objects.get(id=fa.file_id)
 
                 # only java files
-                if java_only and not java_filename_filter(f.path.lower()):
+                if java_only and not filename_filter(f.path.lower()):
                     continue
 
                 if label == 'validated_bugfix':
@@ -298,7 +299,7 @@ class InducingMiner:
                     if label in ['issueonly_bugfix', 'adjustedszz_bugfix', 'issuefasttext_bugfix'] and str(issue.issue_type).lower() != 'bug':
                         continue
 
-                    if not jira_is_resolved_and_fixed(issue):
+                    if not is_resolved_and_fixed(issue, self.its, self._project_name):
                         continue
 
                     if label == 'validated_bugfix':
