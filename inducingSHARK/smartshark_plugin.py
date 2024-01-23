@@ -32,7 +32,7 @@ def run_inducing(log, input_path, args):
     log.info("memory for git: %s mb", asizeof.asizeof(im._cg) / 1024 / 1024)
     # everything with label='validated_bugfix' uses commit.fixed_issue_ids
     # szz uses commit.szz_issue_ids
-    im.write_bug_inducing(label='issue_only_bugfix', inducing_strategy='code_only', java_only=True, affected_versions=False, ignore_refactorings=False, name='SZZ')  # mine
+    im.write_bug_inducing(label='issueonly_bugfix', inducing_strategy='code_only', java_only=True, affected_versions=False, ignore_refactorings=False, name='SZZ')  # mine
 
 
     # im.write_bug_inducing(label='adjustedszz_bugfix', inducing_strategy='all', java_only=False, affected_versions=False, ignore_refactorings=False, name='SZZ')  # plain szz
