@@ -261,8 +261,12 @@ class InducingMiner:
 
         # fetch before instead of iterate over the cursor because of timeout
         bugfix_commit_ids = [c.id for c in Commit.objects.filter(**params).only('id').timeout(False)]  # maybe list comprehension will close the cursor
+        cnt = 0
         for bugfix_commit_id in bugfix_commit_ids:
+            if cnt % 100 == 0:
+                self._log.info(f'{cnt}/{len(bugfix_commit_ids)} commits processed')
 
+            cnt += 1
             bugfix_commit = Commit.objects.only('revision_hash', 'id', 'fixed_issue_ids', 'szz_issue_ids', 'linked_issue_ids', 'committer_date').get(id=bugfix_commit_id)
 
             # only modified files
